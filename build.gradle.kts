@@ -1,5 +1,6 @@
 plugins {
     java
+    jacoco
     id("org.springframework.boot") version "3.4.2"
     id("io.spring.dependency-management") version "1.1.7"
 }
@@ -18,14 +19,15 @@ configurations {
         extendsFrom(configurations.annotationProcessor.get())
     }
 }
-val seleniumJavaVersion = "4.14.1"
-val seleniumJupiterVersion = "5.0.1"
-val webdrivermanagerVersion = "5.6.3"
-val junitJupiterVersion = "5.9.1"
 
 repositories {
     mavenCentral()
 }
+
+val seleniumJavaVersion = "4.14.1"
+val seleniumJupiterVersion = "5.0.1"
+val webdrivermanagerVersion = "5.6.3"
+
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
@@ -35,33 +37,45 @@ dependencies {
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    testImplementation("org.seleniumhq.selenium:selenium-java:$seleniumJavaVersion")
-    testImplementation("io.github.bonigarcia:selenium-jupiter:$seleniumJupiterVersion")
-    testImplementation("io.github.bonigarcia:webdrivermanager:$webdrivermanagerVersion")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion")
+    testImplementation("org.seleniumhq.selenium:selenium-java:4.14.1")
+    testImplementation("io.github.bonigarcia:selenium-jupiter:5.0.1")
+    testImplementation("io.github.bonigarcia:webdrivermanager:5.6.3")
+    testImplementation("org.junit.jupiter:junit-jupiter")
 
 }
-tasks.register<Test>(name = "unitTest") {
+
+
+tasks.register<Test>( "unitTest") {
     description = "Runs unit tests."
     group = "verification"
 
     filter {
         excludeTestsMatching("*FunctionalTest")
+
     }
 }
-
-tasks.register<Test>(name = "functionalTest") {
+tasks.register<Test>( "functionalTest") {
     description = "Runs functional tests."
     group = "verification"
 
     filter {
         includeTestsMatching("*FunctionalTest")
+
     }
+
+}
+
+tasks.test {
+    filter {
+        excludeTestsMatching("*FunctionalTest") // Exclude functional tests
+    }
+    finalizedBy(tasks.jacocoTestReport) // Ensure jacocoTestReport runs after test
+}
+
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // Make sure jacocoTestReport runs after test
 }
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 }
-
