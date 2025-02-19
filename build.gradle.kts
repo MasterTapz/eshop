@@ -67,18 +67,17 @@ tasks.register<Test>( "functionalTest") {
 
 }
 
-}
-
 tasks.test {
     filter {
-        excludeTestsMatching("*FunctionalTest") // Exclude functional tests
+        excludeTestsMatching("*FunctionalTest")
     }
-    finalizedBy(tasks.jacocoTestReport) // Ensure jacocoTestReport runs after test
+    finalizedBy(tasks.jacocoTestReport)
 }
 
 tasks.jacocoTestReport {
-    dependsOn(tasks.test) // Make sure jacocoTestReport runs after test
+    dependsOn(tasks.test)
 }
+
 
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
