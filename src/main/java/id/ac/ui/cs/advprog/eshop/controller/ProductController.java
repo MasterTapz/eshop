@@ -5,7 +5,7 @@ import id.ac.ui.cs.advprog.eshop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation .*;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +13,8 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/product")
 public class ProductController {
+
+    private static final String REDIRECT_PRODUCT_LIST = "redirect:/product/list";  // ✅ Define constant
 
     @Autowired
     private ProductService service;
@@ -36,7 +38,6 @@ public class ProductController {
         List<Product> allProducts = service.findAll();
         model.addAttribute("products", allProducts);
         return "productList";
-
     }
 
     @GetMapping("/edit/{id}")
@@ -48,20 +49,18 @@ public class ProductController {
                 return "editProduct";
             }
         }
-        return "redirect:/product/list";
+        return REDIRECT_PRODUCT_LIST;  // ✅ Use constant
     }
 
     @PostMapping("/edit")
     public String editProductPost(@ModelAttribute Product product) {
         service.update(product);
-        return "redirect:/product/list";
+        return REDIRECT_PRODUCT_LIST;  // ✅ Use constant
     }
-
 
     @GetMapping("/delete/{id}")
     public String deleteProduct(@PathVariable("id") String id) {
         service.delete(id);
-        return "redirect:/product/list";
+        return REDIRECT_PRODUCT_LIST;  // ✅ Use constant
     }
-
 }
