@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Iterator;
 
@@ -20,6 +19,7 @@ class ProductRepositoryTest {
 
     @BeforeEach
     void setUp() {
+        productRepository = new ProductRepository();
     }
 
     @Test
@@ -39,59 +39,55 @@ class ProductRepositoryTest {
     }
 
     @Test
-    void testFindAllIfEmpty() {
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertFalse(productIterator.hasNext());
-    }
-
-    @Test
-    void testFindAllIfMoreThanOneProduct() {
+    void testUpdateProductCoversForLoop() {
+        // Add multiple products to ensure the loop iterates
         Product product1 = new Product();
-        product1.setProductId("eb558e9f-1c39-460e-8860-71af6af63bd6");
-        product1.setProductName("Sampo Cap Bambang");
-        product1.setProductQuantity(100);
+        product1.setProductId("111");
+        product1.setProductName("Product 1");
+        product1.setProductQuantity(10);
         productRepository.create(product1);
 
         Product product2 = new Product();
-        product2.setProductId("a0f9de46-90b1-437d-a0bf-d0821dde9096");
-        product2.setProductName("Sampo Cap Usep");
-        product2.setProductQuantity(50);
+        product2.setProductId("222");
+        product2.setProductName("Product 2");
+        product2.setProductQuantity(20);
         productRepository.create(product2);
 
+        Product product3 = new Product();
+        product3.setProductId("333");
+        product3.setProductName("Product 3");
+        product3.setProductQuantity(30);
+        productRepository.create(product3);
+
+        // Attempt to update the second product
+        Product updatedProduct = new Product();
+        updatedProduct.setProductId("222");
+        updatedProduct.setProductName("Updated Product 2");
+        updatedProduct.setProductQuantity(50);
+
+        Product result = productRepository.update(updatedProduct);
+
+        // Ensure update was successful and loop iterated
+        assertNotNull(result);
+        assertEquals("222", result.getProductId());
+        assertEquals("Updated Product 2", result.getProductName());
+        assertEquals(50, result.getProductQuantity());
+
+        // Verify that product1 and product3 remain unchanged
         Iterator<Product> productIterator = productRepository.findAll();
-        assertTrue(productIterator.hasNext());
-        Product savedProduct = productIterator.next();
-        assertEquals(product1.getProductId(), savedProduct.getProductId());
-        savedProduct = productIterator.next();
-        assertEquals(product2.getProductId(), savedProduct.getProductId());
-        assertFalse(productIterator.hasNext());
+        Product firstProduct = productIterator.next();
+        assertEquals("111", firstProduct.getProductId());
 
-    }
-    @Test
-    void testEditProductPositive() {
-        // Create and add a product
-        Product product = new Product();
-        product.setProductId("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
-        product.setProductName("Laptop Ultra X");
-        product.setProductQuantity(50);
-        productRepository.create(product);
+        Product secondProduct = productIterator.next();
+        assertEquals("222", secondProduct.getProductId()); // This should be the updated one
+        assertEquals("Updated Product 2", secondProduct.getProductName());
 
-        // Edit product details
-        product.setProductName("Laptop Ultra X Pro");
-        product.setProductQuantity(75);
-        productRepository.update(product);
-
-        // Retrieve and verify the updated product
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertTrue(productIterator.hasNext());
-        Product updatedProduct = productIterator.next();
-        assertEquals("Laptop Ultra X Pro", updatedProduct.getProductName());
-        assertEquals(75, updatedProduct.getProductQuantity());
+        Product thirdProduct = productIterator.next();
+        assertEquals("333", thirdProduct.getProductId());
     }
 
     @Test
     void testEditProductNegative() {
-        // Attempt to edit a non-existent product
         Product nonExistentProduct = new Product();
         nonExistentProduct.setProductId("unknown-id-9876");
         nonExistentProduct.setProductName("Smartwatch Phantom");
@@ -102,27 +98,90 @@ class ProductRepositoryTest {
     }
 
     @Test
+    void testEditProductWithNullId() {
+        Product product = new Product();
+        product.setProductId(null);
+        product.setProductName("Null ID Product");
+        product.setProductQuantity(100);
+
+        Product result = productRepository.update(product);
+        assertNull(result, "Expected null when updating a product with a null ID");
+    }
+
+    @Test
+    void testEditProductOnEmptyRepository() {
+        Product product = new Product();
+        product.setProductId("does-not-exist");
+        product.setProductName("Fake Product");
+        product.setProductQuantity(10);
+
+        Product result = productRepository.update(product);
+        assertNull(result, "Expected null when updating in an empty repository");
+    }
+
+    @Test
     void testDeleteProductPositive() {
-        // Create and add a product
         Product product = new Product();
         product.setProductId("z9y8x7w6-v5u4-3210-qrst-0987654321ab");
         product.setProductName("Wireless Headphones Z");
         product.setProductQuantity(120);
         productRepository.create(product);
 
-        // Delete the product
-        productRepository.delete("z9y8x7w6-v5u4-3210-qrst-0987654321ab");
+        boolean deleted = productRepository.delete("z9y8x7w6-v5u4-3210-qrst-0987654321ab");
+        assertTrue(deleted, "Expected delete() to return true");
 
-        // Verify the product is deleted
         Iterator<Product> productIterator = productRepository.findAll();
-        assertFalse(productIterator.hasNext());
+        assertFalse(productIterator.hasNext(), "Expected product list to be empty after deletion");
     }
 
     @Test
     void testDeleteProductNegative() {
-        // Attempt to delete a non-existent product
         boolean result = productRepository.delete("fake-product-0001");
         assertFalse(result, "Expected false when deleting a non-existent product");
     }
 
+    @Test
+    void testDeleteProductWithNullId() {
+        boolean result = productRepository.delete(null);
+        assertFalse(result, "Expected false when deleting a product with null ID");
+    }
+
+    @Test
+    void testDeleteProductWhenMultipleExist() {
+        Product product1 = new Product();
+        product1.setProductId("111");
+        product1.setProductName("Product 1");
+        productRepository.create(product1);
+
+        Product product2 = new Product();
+        product2.setProductId("222");
+        product2.setProductName("Product 2");
+        productRepository.create(product2);
+
+        Product product3 = new Product();
+        product3.setProductId("333");
+        product3.setProductName("Product 3");
+        productRepository.create(product3);
+
+        // Delete the middle product
+        boolean deleted = productRepository.delete("222");
+        assertTrue(deleted, "Expected delete() to return true");
+
+        // Ensure other products still exist
+        Iterator<Product> productIterator = productRepository.findAll();
+        assertTrue(productIterator.hasNext());
+        Product remainingProduct1 = productIterator.next();
+        assertEquals("111", remainingProduct1.getProductId());
+
+        Product remainingProduct2 = productIterator.next();
+        assertEquals("333", remainingProduct2.getProductId());
+
+        assertFalse(productIterator.hasNext(), "Expected only two products remaining");
+    }
+
+    @Test
+    void testDeleteFromEmptyRepository() {
+        boolean deleted = productRepository.delete("any-id");
+        assertFalse(deleted, "Expected delete() to return false when repository is empty");
+    }
 }
