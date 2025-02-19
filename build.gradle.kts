@@ -3,11 +3,20 @@ plugins {
     jacoco
     id("org.springframework.boot") version "3.4.2"
     id("io.spring.dependency-management") version "1.1.7"
+    id("org.sonarqube") version "6.0.1.5171"
+
 }
 
 group = "id.ac.ui.cs.advprog"
 version = "0.0.1-SNAPSHOT"
 
+sonar {
+    properties {
+        property("sonar.projectKey", "MasterTapz_eshop")
+        property("sonar.organization", "mastertapz")
+        property("sonar.host.url", "https://sonarcloud.io")
+    }
+}
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
