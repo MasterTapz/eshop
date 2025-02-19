@@ -65,6 +65,8 @@ tasks.register<Test>( "functionalTest") {
 
 }
 
+}
+
 tasks.test {
     filter {
         excludeTestsMatching("*FunctionalTest") // Exclude functional tests
