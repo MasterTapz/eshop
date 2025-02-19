@@ -20,3 +20,6 @@ To reduce redundancy, I utilized existing service and repository methods instead
 
 
 2. The current CI/CD setup only partially meets the definition of Continuous Integration (CI) and Continuous Deployment (CD). The CI pipeline automates unit testing and code quality analysis using GitHub Actions and SonarCloud, detecting bugs and problems early in the process. The CD process releases the application to Koyeb or Render, where automatic releases are performed without any human intervention. However, the pipeline does not have an automated rollback process, and thus, in the event of a failed deployment, it must be fixed manually. 
+
+# WEBSITE URL
+https://theoretical-quinn-tapz-a749f6e1.koyeb.app/
