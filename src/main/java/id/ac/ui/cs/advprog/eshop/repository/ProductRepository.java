@@ -16,10 +16,24 @@ public class ProductRepository {
         return product;
     }
 
-    public Iterator<Product> findAll () {
+    public Iterator<Product> findAll() {
         return productData.iterator();
-
     }
+
+    // New method to return a List directly instead of an Iterator
+    public List<Product> findAllAsList() {
+        return new ArrayList<>(productData);
+    }
+
+    public Product findById(String productId) {
+        for (Product product : productData) {
+            if (product.getProductId() != null && product.getProductId().equals(productId)) {
+                return product;
+            }
+        }
+        return null; // Return null if no product is found
+    }
+
     public Product update(Product updatedProduct) {
         for (Product product : productData) {
             if (product.getProductId().equals(updatedProduct.getProductId())) {
