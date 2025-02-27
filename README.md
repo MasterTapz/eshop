@@ -21,5 +21,17 @@ To reduce redundancy, I utilized existing service and repository methods instead
 
 2. The current CI/CD setup only partially meets the definition of Continuous Integration (CI) and Continuous Deployment (CD). The CI pipeline automates unit testing and code quality analysis using GitHub Actions and SonarCloud, detecting bugs and problems early in the process. The CD process releases the application to Koyeb or Render, where automatic releases are performed without any human intervention. However, the pipeline does not have an automated rollback process, and thus, in the event of a failed deployment, it must be fixed manually. 
 
+# MODULE 3
+
+1. In my project, I applied SOLID principles throughout the code base, as seen in ProductController.java where the controller handles only product-related tasks and delegates business logic to ProductServiceImpl.java. In CarController.java, I separated car operations so that it focuses solely on car management. I ensured new functionality can be added via extension points in ProductService.java without modifying existing methods. I also followed the Liskov Substitution Principle by allowing subclasses like DigitalProduct.java and ElectricCar.java to replace their parent classes without altering behavior. Finally, in ProductServiceImpl.java, I implemented dependency inversion by making the service depend on repository abstractions rather than concrete implementations.
+
+
+2. Applying SOLID principles has made the project more modular and easier to test, as demonstrated in ProductController.java, where distinct responsibilities lead to fewer side effects when making changes. The Open/Closed Principle in ProductServiceImpl.java allows for adding features like custom filtering without altering existing code. In CarController.java, dependency inversion enables substituting the car service with a mock during testing. This clear separation of concerns makes debugging and future enhancements straightforward. Overall, each file, including ProductServiceImpl.java and CarController.java, maintains its purpose and minimizes regression risks.
+
+
+3. Without SOLID principles, the project would become tightly coupled and difficult to maintain, as seen if ProductController.java combined both HTTP handling and business logic. If the Open/Closed Principle were ignored in ProductServiceImpl.java, adding new features like filtering would require modifying existing code, increasing the chance of regression errors. Neglecting the Liskov Substitution Principle could result in subclasses that do not work seamlessly, for example, replacing a Product with a DigitalProduct might break functionality. A lack of proper interface segregation and dependency inversion would cause changes in one module to ripple through the entire application. Overall, these shortcomings would make the code base less modular, more error-prone, and harder to enhance over time.
+
+
+
 # WEBSITE URL
 https://theoretical-quinn-tapz-a749f6e1.koyeb.app/
