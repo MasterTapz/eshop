@@ -31,7 +31,11 @@ To reduce redundancy, I utilized existing service and repository methods instead
 
 3. Without SOLID principles, the project would become tightly coupled and difficult to maintain, as seen if ProductController.java combined both HTTP handling and business logic. If the Open/Closed Principle were ignored in ProductServiceImpl.java, adding new features like filtering would require modifying existing code, increasing the chance of regression errors. Neglecting the Liskov Substitution Principle could result in subclasses that do not work seamlessly, for example, replacing a Product with a DigitalProduct might break functionality. A lack of proper interface segregation and dependency inversion would cause changes in one module to ripple through the entire application. Overall, these shortcomings would make the code base less modular, more error-prone, and harder to enhance over time.
 
+# MODULE 4
+
+1. Reflecting on Percival’s (2017) self-assessment, the TDD approach has been valuable by defining expected behaviors, promoting modular design, and providing rapid feedback. However, there is room for improvement, such as broadening test coverage to capture more edge cases and enhancing the diagnostic clarity of failed tests. Although refactoring was part of the process, some temporary code remained longer than necessary. Moving forward, more time will be dedicated to crafting comprehensive test cases upfront and implementing immediate cleanup routines to maintain a lean and well-structured codebase.
 
 
+2. Evaluating my unit tests against the F.I.R.S.T. principles, I found that they generally meet the criteria of being fast, independent, repeatable, self-validating, and timely. However, there are areas for improvement. Some tests involving external resources slowed down execution, and shared state issues revealed the need for stricter isolation with more effective setup and teardown routines. Moving forward, I plan to enhance test isolation, automate validations for complex scenarios, and ensure all tests consistently adhere to the F.I.R.S.T. principles efficiently.
 # WEBSITE URL
 https://theoretical-quinn-tapz-a749f6e1.koyeb.app/
